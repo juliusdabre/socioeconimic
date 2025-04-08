@@ -8,7 +8,7 @@ df = pd.read_excel("Socioeconomic.xlsx", sheet_name=0)
 df.columns = df.columns.str.strip()
 
 st.set_page_config(page_title="Socioeconomic Geo Map", layout="wide")
-st.title("🌏 Socioeconomic Indicator Map")
+st.title("Socioeconomic Indicator Map")
 
 # Map plot
 fig = px.scatter_mapbox(
@@ -23,8 +23,8 @@ fig = px.scatter_mapbox(
         "#a6d96a", "#66bd63", "#1a9850", "#006837", "#004529"
     ],
     range_color=(1, 10),
-    size_max=15,
-    zoom=6,
+    size_max=20,
+    zoom=8,
     height=700,
     mapbox_style="open-street-map"
 )
