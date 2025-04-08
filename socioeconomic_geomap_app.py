@@ -24,8 +24,8 @@ fig = px.scatter_mapbox(
     ],
     range_color=(1, 10),
     size_max=20,
-    zoom=8,
-    height=700,
+    zoom=10,
+    height=800,
     mapbox_style="open-street-map"
 )
 
