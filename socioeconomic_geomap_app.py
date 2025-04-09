@@ -12,7 +12,7 @@ df.columns = df.columns.str.strip()
 st.set_page_config(page_title="Socioeconomic Geo Map", layout="wide")
 st.title("🌏 Socioeconomic Indicator Map")
 
-# Mapbox-supported styles
+# Only use Mapbox-supported styles
 map_styles = {
     "Streets": "mapbox://styles/mapbox/streets-v12",
     "Light": "mapbox://styles/mapbox/light-v11",
@@ -27,36 +27,22 @@ st.sidebar.header("🔍 Filter Options")
 # Style selector
 selected_style = st.sidebar.selectbox("Select Mapbox Style", list(map_styles.keys()))
 
-# State filter
-state_options = sorted(df["State"].dropna().unique())
-selected_state = st.sidebar.selectbox("Select State:", options=state_options)
+# Suburb filter dropdown
+suburb_options = sorted(df["Suburb"].dropna().unique())
+selected_suburb = st.sidebar.selectbox("Select Suburb to Focus:", options=suburb_options)
 
-# Suburb dropdown filtered by selected state
-suburb_options = sorted(df[df["State"] == selected_state]["Suburb"].dropna().unique())
-selected_suburb = st.sidebar.selectbox("Select Suburb:", options=["All"] + suburb_options)
+# Filter dataframe to selected suburb only
+filtered_df = df[df["Suburb"] == selected_suburb]
 
-# Ranking range filter
+# Ranking range (for color scaling)
 min_rank = int(df["Socio-economic Ranking"].min())
 max_rank = int(df["Socio-economic Ranking"].max())
-selected_rank_range = st.sidebar.slider(
-    "Select Socio-economic Ranking Range:",
-    min_value=min_rank,
-    max_value=max_rank,
-    value=(min_rank, max_rank)
-)
 
-# Filter DataFrame
-filtered_df = df[
-    (df["State"] == selected_state) &
-    (df["Socio-economic Ranking"] >= selected_rank_range[0]) &
-    (df["Socio-economic Ranking"] <= selected_rank_range[1])
-]
+# Calculate zoom center
+center_lat = filtered_df["Lat"].values[0]
+center_lon = filtered_df["Long"].values[0]
 
-# Apply suburb filter only if a specific one is chosen
-if selected_suburb != "All":
-    filtered_df = filtered_df[filtered_df["Suburb"] == selected_suburb]
-
-# Map plot
+# Map plot focused on one suburb
 fig = px.scatter_mapbox(
     filtered_df,
     lat="Long",
@@ -69,10 +55,11 @@ fig = px.scatter_mapbox(
         "#a6d96a", "#66bd63", "#1a9850", "#006837", "#004529"
     ],
     range_color=(min_rank, max_rank),
-    size_max=12,
-    zoom=6,
-    height=500,
-    mapbox_style=map_styles[selected_style]
+    size_max=15,
+    zoom=11,
+    height=600,
+    mapbox_style=map_styles[selected_style],
+    center={"lat": center_lat, "lon": center_lon}
 )
 
 st.plotly_chart(fig, use_container_width=True)
