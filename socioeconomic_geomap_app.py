@@ -61,7 +61,7 @@ fig = px.scatter_mapbox(
         "#a6d96a", "#66bd63", "#1a9850", "#006837", "#004529"
     ],
     range_color=(min_rank, max_rank),
-    size_max=15,
+    size_max=12,
     zoom=6,
     height=500,
     mapbox_style=map_styles[selected_style]
