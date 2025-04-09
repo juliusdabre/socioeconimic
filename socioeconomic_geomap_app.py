@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -13,7 +12,7 @@ df.columns = df.columns.str.strip()
 st.set_page_config(page_title="Socioeconomic Geo Map", layout="wide")
 st.title("🌏 Socioeconomic Indicator Map")
 
-# Only use Mapbox-supported styles
+# Mapbox-supported styles
 map_styles = {
     "Streets": "mapbox://styles/mapbox/streets-v12",
     "Light": "mapbox://styles/mapbox/light-v11",
@@ -30,11 +29,11 @@ selected_style = st.sidebar.selectbox("Select Mapbox Style", list(map_styles.key
 
 # State filter
 state_options = sorted(df["State"].dropna().unique())
-selected_states = st.sidebar.multiselect("Select State(s):", options=state_options, default=state_options)
+selected_state = st.sidebar.selectbox("Select State:", options=state_options)
 
-# Suburb filter
-suburb_options = sorted(df["Suburb"].dropna().unique())
-selected_suburbs = st.sidebar.multiselect("Select Suburb(s):", options=suburb_options, default=suburb_options)
+# Suburb dropdown filtered by selected state
+suburb_options = sorted(df[df["State"] == selected_state]["Suburb"].dropna().unique())
+selected_suburb = st.sidebar.selectbox("Select Suburb:", options=["All"] + suburb_options)
 
 # Ranking range filter
 min_rank = int(df["Socio-economic Ranking"].min())
@@ -46,19 +45,22 @@ selected_rank_range = st.sidebar.slider(
     value=(min_rank, max_rank)
 )
 
-# Filter dataframe
+# Filter DataFrame
 filtered_df = df[
-    (df["State"].isin(selected_states)) &
-    (df["Suburb"].isin(selected_suburbs)) &
+    (df["State"] == selected_state) &
     (df["Socio-economic Ranking"] >= selected_rank_range[0]) &
     (df["Socio-economic Ranking"] <= selected_rank_range[1])
 ]
 
+# Apply suburb filter only if a specific one is chosen
+if selected_suburb != "All":
+    filtered_df = filtered_df[filtered_df["Suburb"] == selected_suburb]
+
 # Map plot
 fig = px.scatter_mapbox(
     filtered_df,
-    lat="Long",  # Longitude
-    lon="Lat",   # Latitude
+    lat="Long",
+    lon="Lat",
     color="Socio-economic Ranking",
     hover_name="Suburb",
     hover_data={"State": True, "Socio-economic Ranking": True, "Lat": False, "Long": False},
