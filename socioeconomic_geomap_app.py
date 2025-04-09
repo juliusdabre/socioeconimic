@@ -63,7 +63,7 @@ fig = px.scatter_mapbox(
     range_color=(min_rank, max_rank),
     size_max=15,
     zoom=6,
-    height=700,
+    height=500,
     mapbox_style=map_styles[selected_style]
 )
 
