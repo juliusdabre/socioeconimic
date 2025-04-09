@@ -1,3 +1,10 @@
+Here’s your updated code with a **Suburb filter** added to the sidebar, working alongside the State and Ranking filters:
+
+---
+
+### ✅ **Updated Code with Suburb Filter:**
+
+```python
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -31,6 +38,10 @@ selected_style = st.sidebar.selectbox("Select Mapbox Style", list(map_styles.key
 state_options = sorted(df["State"].dropna().unique())
 selected_states = st.sidebar.multiselect("Select State(s):", options=state_options, default=state_options)
 
+# Suburb filter
+suburb_options = sorted(df["Suburb"].dropna().unique())
+selected_suburbs = st.sidebar.multiselect("Select Suburb(s):", options=suburb_options, default=suburb_options)
+
 # Ranking range filter
 min_rank = int(df["Socio-economic Ranking"].min())
 max_rank = int(df["Socio-economic Ranking"].max())
@@ -44,6 +55,7 @@ selected_rank_range = st.sidebar.slider(
 # Filter dataframe
 filtered_df = df[
     (df["State"].isin(selected_states)) &
+    (df["Suburb"].isin(selected_suburbs)) &
     (df["Socio-economic Ranking"] >= selected_rank_range[0]) &
     (df["Socio-economic Ranking"] <= selected_rank_range[1])
 ]
