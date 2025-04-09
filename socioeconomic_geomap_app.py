@@ -54,3 +54,12 @@ fig = px.scatter_mapbox(
 )
 
 st.plotly_chart(fig, use_container_width=True)
+
+# Only use Mapbox-supported styles
+map_styles = {
+    "Streets": "mapbox://styles/mapbox/streets-v12",
+    "Light": "mapbox://styles/mapbox/light-v11",
+    "Dark": "mapbox://styles/mapbox/dark-v11",
+    "Outdoors": "mapbox://styles/mapbox/outdoors-v12",
+    "Satellite": "mapbox://styles/mapbox/satellite-v9"
+}
